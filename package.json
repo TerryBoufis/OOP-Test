@@ -1,0 +1,15 @@
+{
+  "name": "team-progile-generator",
+  "version": "1.0.0",
+  "description": "generating team profiles",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^8.2.4",
+    "jest": "^29.2.2"
+  }
+}
