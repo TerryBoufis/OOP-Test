@@ -1,53 +1,122 @@
 const inquirer = require('inquirer');
 const generateHTML = require('./src/htmlgenerator')
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern')
+const team = []
 
-// Node v10+ includes a promises module as an alternative to using callbacks with file system methods.
+
+
 const { writeFile } = require('fs').promises;
 
-// Use writeFileSync method to use promises instead of a callback function
 
-const promptUser = () => {
+
+const promptManagerQuestions = () => {
   return inquirer.prompt([
     {
-      type: '',
+      type: 'input',
       name: 'name',
       message: 'What is your name?',
     },
     {
       type: 'input',
-      name: '',
-      message: 'Where are you from?',
+      name: 'id',
+      message: 'What is your id?',
     },
     {
       type: 'input',
-      name: 'hobby',
-      message: 'What is your favorite hobby?',
+      name: 'email',
+      message: 'What is your email?',
     },
     {
       type: 'input',
-      name: 'food',
-      message: 'What is your favorite food?',
+      name: 'officeNumber',
+      message: 'What is your office number?',
+    },
+  ]);
+};
+
+const promptEngineerQuestions = () => {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: 'What is your name?',
+    },
+    {
+      type: 'input',
+      name: 'id',
+      message: 'What is your id?',
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: 'What is your email?',
     },
     {
       type: 'input',
       name: 'github',
       message: 'Enter your GitHub Username',
     },
+  ])
+}
+
+const promptInternQuestions = () => {
+  inquirer.prompt([
     {
       type: 'input',
-      name: 'linkedin',
-      message: 'Enter your LinkedIn URL.',
+      name: 'name',
+      message: 'What is your name?',
     },
-  ]);
-};
+    {
+      type: 'input',
+      name: 'id',
+      message: 'What is your id?',
+    },
+    {
+      type: 'input',
+      name: 'email',
+      message: 'What is your email?',
+    },
+    {
+      type: 'input',
+      name: 'school',
+      message: 'What is your school',
+    },
+  ])
+}
 
+const promptTeamMemberQuestions = () => {
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'employeeType',
+      message: 'Which type of employee would you like to add?',
+      choices: ['Engineer', 'Intern', 'Done']
+     }
+  ]) .then((answers) => {
+    if (answers.employeeType === 'Engineer') {
+      promptEngineerQuestions()
+    }
+    else if (answers.employeeType === 'Intern') {
+      promptInternQuestions()
+    }
+    else {
 
-// Bonus using writeFileSync as a promise
+    }
+  })
+}
+
 const init = () => {
-  promptUser()
-    // Use writeFile method imported from fs.promises to use promises instead of
-    // a callback function
-    .then((answers) => {
+  promptManagerQuestions()
+    .then((answers) => { 
+      const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber)
+      team.push(manager)
+      const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github)
+      team.push(engineer)
+      const intern = new Intern(answers.name, answers.id, answers.email, answers.school)
+      team.push(intern)
+      promptTeamMemberQuestions()
       return writeFile('./dist/index.html', generateHTML(answers))
     })
     .then(() => console.log('Successfully wrote to index.html'))
